@@ -1,0 +1,23 @@
+# Use the official Python 3.10 base image
+FROM python:3.10.5-slim-buster
+
+WORKDIR /app
+
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends \
+      xcb \ 
+      libglib2.0-0 \
+      libgl1-mesa-glx && \
+    apt-get -y clean 
+
+COPY requirements.txt requirements.txt
+RUN pip3 install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt
+
+# Copy the client files to the container
+COPY client.py .
+COPY client_backup.py .
+COPY media_player.py .
+
+# Set the entrypoint command for the container
+CMD ["python", "client.py"]
